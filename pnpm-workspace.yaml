@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "server"
+  - "packages/*"
+allowBuilds:
+  unrs-resolver: true
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
