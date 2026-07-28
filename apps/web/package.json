@@ -11,17 +11,27 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
     "@en/config": "workspace:*",
+    "@microsoft/fetch-event-source": "^2.0.1",
+    "axios": "^1.18.1",
+    "element-plus": "^2.14.3",
+    "marked": "^18.0.7",
     "pinia": "^4.0.2",
+    "pinia-plugin-persistedstate": "^4.7.1",
+    "three": "^0.185.1",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@tsconfig/node24": "^24.0.4",
     "@types/node": "^26.1.1",
+    "@types/three": "^0.185.1",
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/tsconfig": "^0.9.1",
     "npm-run-all2": "^9.0.2",
+    "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
     "vite": "^8.1.5",
     "vite-plugin-vue-devtools": "^8.2.1",
