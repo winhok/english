@@ -3,6 +3,8 @@ packages:
   - "server"
   - "packages/*"
 allowBuilds:
+  '@prisma/engines': true
+  prisma: true
   unrs-resolver: true
 minimumReleaseAge: 1440
 minimumReleaseAgeStrict: true
