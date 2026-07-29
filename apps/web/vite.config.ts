@@ -8,7 +8,13 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    port: process.env.PORT ? parseInt(process.env.PORT) : Config.ports.web,
+    port: Config.ports.web,
+    proxy: {
+      "/api": {
+        target: `http://localhost:${Config.ports.server}`,
+        changeOrigin: true,
+      },
+    },
   },
   plugins: [vue(), vueDevTools(), tailwindcss()],
   resolve: {

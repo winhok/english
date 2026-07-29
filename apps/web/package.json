@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
+    "@en/common": "workspace:*",
     "@en/config": "workspace:*",
     "@microsoft/fetch-event-source": "^2.0.1",
     "axios": "^1.18.1",
@@ -26,7 +27,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@tsconfig/node24": "^24.0.4",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.1.2",
     "@types/three": "^0.185.1",
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/tsconfig": "^0.9.1",
