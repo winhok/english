@@ -7,7 +7,10 @@
         <div class="text-2xl font-bold pt-8 text-l text-indigo-500">通过跟AI对话，提高你的英语水平</div>
         <div class="text-1xl font-bold pt-5 text-gray-300">超1000000学员的选择，提升您的英语能力</div>
         <div class="flex items-center gap-2 pt-10">
-          <button class="bg-indigo-700 text-white rounded-[100px] px-4 py-2 cursor-pointer text-sm block w-30 h-10">
+          <button
+            @click="showLogin"
+            class="bg-indigo-700 text-white rounded-[100px] px-4 py-2 cursor-pointer text-sm block w-30 h-10"
+          >
             立即学习
           </button>
           <button class="bg-indigo-700 text-white rounded-[100px] px-4 py-2 cursor-pointer text-sm block w-30 h-10">
@@ -92,6 +95,9 @@ import Hologram from "./components/Hologram.vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { onMounted, reactive } from "vue";
+import { useLogin } from "@/hooks/useLogin.ts";
+
+const { login } = useLogin();
 
 gsap.registerPlugin(ScrollTrigger);
 const stats = reactive([
@@ -216,6 +222,12 @@ const initProject = () => {
       },
     },
   );
+};
+
+const showLogin = () => {
+  login().then(() => {
+    console.log("登录成功跳转的页面");
+  });
 };
 
 onMounted(() => {
