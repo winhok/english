@@ -17,7 +17,7 @@
           class="w-full h-full text-sm border-none rounded-lg p-2 focus:outline-none"
         />
       </div>
-      <div v-if="wordList.length > 0" class="w-1/2 mx-auto max-h-[500px] border-t border-gray-200 overflow-y-auto">
+      <div v-if="wordList.length > 0" class="w-1/2 mx-auto max-h-125 border-t border-gray-200 overflow-y-auto">
         <div
           @click="copyWord(item.word)"
           v-for="item in wordList"

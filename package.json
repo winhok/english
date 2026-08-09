@@ -13,5 +13,5 @@
 	"devDependencies": {
 		"@types/md5": "^2.3.6"
 	},
-	"packageManager": "pnpm@11.17.0"
+	"packageManager": "pnpm@11.20.0"
 }

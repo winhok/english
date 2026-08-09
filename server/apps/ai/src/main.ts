@@ -8,6 +8,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AiModule);
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new InterceptorExceptionFilter());
-  await app.listen(process.env.PORT ?? Config.ports.ai);
+  await app.listen(Config.ports.ai);
 }
 bootstrap();
