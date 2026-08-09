@@ -1,27 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import type { UserLogin, UserRegister } from '@en/common/user';
+import type {
+  UserLogin,
+  UserRegister,
+  Token,
+  RefreshTokenPayload,
+} from '@en/common/user';
 import { PrismaService, ResponseService } from '@libs/shared';
 import type { Prisma } from '@libs/shared/generated/prisma/client';
-
-const userSelect = {
-  id: true,
-  name: true,
-  email: true,
-  phone: true,
-  address: true,
-  avatar: true,
-  createdAt: true,
-  updatedAt: true,
-  lastLoginAt: true,
-  wordNumber: true,
-  dayNumber: true,
-};
+import { AuthService } from '../auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { userSelect } from './user.select';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly responseService: ResponseService,
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
   ) {}
   async login(createUserDto: UserLogin) {
     const user = await this.prisma.user.findUnique({
@@ -38,7 +34,12 @@ export class UserService {
       data: { lastLoginAt: new Date() },
       select: userSelect,
     });
-    return this.responseService.success(updataUser);
+    const token = this.authService.generateToken({
+      userId: updataUser.id,
+      name: updataUser.name,
+      email: updataUser.email,
+    });
+    return this.responseService.success({ ...updataUser, token });
   }
 
   async register(createUserDto: UserRegister) {
@@ -67,6 +68,36 @@ export class UserService {
       data,
       select: userSelect,
     });
-    return this.responseService.success(newUser);
+    const token = this.authService.generateToken({
+      userId: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+    });
+    return this.responseService.success({ ...newUser, token });
+  }
+
+  async refreshToken(createUserDto: Omit<Token, 'accessToken'>) {
+    try {
+      const decoded = this.jwtService.verify<RefreshTokenPayload>(
+        createUserDto.refreshToken,
+      );
+      if (decoded.tokenType !== 'refresh') {
+        return this.responseService.error(null, 'refreshToken已过期或无效');
+      }
+      const user = await this.prisma.user.findUnique({
+        where: { id: decoded.userId },
+      });
+      if (!user) {
+        return this.responseService.error(null, '用户不存在');
+      }
+      const token = this.authService.generateToken({
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+      });
+      return this.responseService.success(token);
+    } catch {
+      return this.responseService.error(null, 'refreshToken已过期或无效');
+    }
   }
 }
