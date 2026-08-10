@@ -9,17 +9,13 @@ import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 import type { RefreshTokenPayload } from '@en/common/user';
 
-interface AuthenticatedRequest extends Request {
-  user?: RefreshTokenPayload;
-}
-
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const request = context.switchToHttp().getRequest<Request>();
     const header = request.headers;
     if (!header.authorization) {
       throw new UnauthorizedException('没有权限访问');

@@ -4,12 +4,16 @@ import type {
   UserRegister,
   Token,
   RefreshTokenPayload,
+  UserUpdate,
 } from '@en/common/user';
 import { PrismaService, ResponseService } from '@libs/shared';
 import type { Prisma } from '@libs/shared/generated/prisma/client';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { userSelect } from './user.select';
+import { userSelect, updateUserSelect } from './user.select';
+import { MinioService } from '@libs/shared/minio/minio.service';
+import { ConfigService } from '@nestjs/config';
+import type { Request } from 'express';
 
 @Injectable()
 export class UserService {
@@ -18,6 +22,8 @@ export class UserService {
     private readonly responseService: ResponseService,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
+    private readonly minioService: MinioService,
+    private readonly configService: ConfigService,
   ) {}
   async login(createUserDto: UserLogin) {
     const user = await this.prisma.user.findUnique({
@@ -99,5 +105,45 @@ export class UserService {
     } catch {
       return this.responseService.error(null, 'refreshToken已过期或无效');
     }
+  }
+
+  async uploadAvatar(file: Express.Multer.File) {
+    if (!file) {
+      return this.responseService.error(null, '文件不存在');
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      return this.responseService.error(null, '文件大小不能超过5MB');
+    }
+    const client = this.minioService.getClient();
+    const bucket = this.minioService.getBucket();
+    const fileName = `${Date.now()}-${file.originalname}`;
+    await client.putObject(bucket, fileName, file.buffer, file.size, {
+      'Content-Type': file.mimetype,
+    });
+    const isHttps = !!Number(this.configService.get('MINIO_USE_SSL'));
+    const baseUrl = isHttps ? 'https' : 'http';
+    const port = this.configService.get<string>('MINIO_PORT');
+    const databaseUrl = `/${bucket}/${fileName}`;
+    const previewUrl = `${baseUrl}://${this.configService.get(
+      'MINIO_ENDPOINT',
+    )}:${port}${databaseUrl}`;
+    return this.responseService.success({ previewUrl, databaseUrl });
+  }
+
+  async updateUser(createUserDto: UserUpdate, user: Request['user']) {
+    const updateUser = await this.prisma.user.update({
+      where: { id: user.userId },
+      data: {
+        name: createUserDto.name,
+        email: createUserDto.email,
+        address: createUserDto.address,
+        avatar: createUserDto.avatar,
+        bio: createUserDto.bio,
+        isTimingTask: createUserDto.isTimingTask,
+        timingTaskTime: createUserDto.timingTaskTime,
+      },
+      select: updateUserSelect,
+    });
+    return this.responseService.success(updateUser);
   }
 }

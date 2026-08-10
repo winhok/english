@@ -29,6 +29,9 @@ model User {
   address         String?
   password        String
   avatar          String?
+  bio             String?
+  isTimingTask    Boolean          @default(false)
+  timingTaskTime  String           @default("00:00:00")
   wordNumber      Int              @default(0)
   dayNumber       Int              @default(0)
   createdAt       DateTime         @default(now())

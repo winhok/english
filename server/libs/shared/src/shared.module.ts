@@ -2,6 +2,7 @@ import { Module, Global } from '@nestjs/common';
 import { SharedService } from './shared.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { ResponseModule } from './response/response.module';
+import { MinioModule } from './minio/minio.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -14,6 +15,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ResponseModule,
     JwtModule,
     ConfigModule,
+    MinioModule,
   ],
   imports: [
     PrismaModule,
@@ -30,6 +32,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         signOptions: { expiresIn: '1d' },
       }),
     }),
+    MinioModule,
   ],
 })
 export class SharedModule {}

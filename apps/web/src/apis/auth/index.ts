@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Response } from "..";
+import type { ApiResponse } from "@en/common/http";
 import type { Token } from "@en/common/user";
 
 const refreshServer = axios.create({
@@ -17,4 +17,4 @@ refreshServer.interceptors.response.use(
 );
 
 export const refreshTokenApi = (data: Omit<Token, "accessToken">) =>
-  refreshServer.post("/user/refresh-token", data) as Promise<Response<Token>>;
+  refreshServer.post("/user/refresh-token", data) as Promise<ApiResponse<Token>>;

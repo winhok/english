@@ -6,6 +6,9 @@ export interface User {
   address?: string | null;
   password: string;
   avatar?: string | null;
+  bio?: string | null;
+  isTimingTask: boolean;
+  timingTaskTime: string;
   wordNumber: number;
   dayNumber: number;
   createdAt: Date;
@@ -15,8 +18,15 @@ export interface User {
 
 export type UserLogin = Pick<User, "phone" | "password">;
 export type UserRegister = Pick<User, "name" | "phone" | "email" | "password">;
-
 export type ResultUser = Omit<User, "password">;
+export type UserUpdate = Pick<
+  User,
+  "name" | "email" | "address" | "avatar" | "bio" | "isTimingTask" | "timingTaskTime"
+>;
+export type AvatarResult = {
+  previewUrl: string;
+  databaseUrl: string;
+};
 
 export type Token = {
   accessToken: string;
