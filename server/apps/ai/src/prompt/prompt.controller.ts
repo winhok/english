@@ -1,15 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { PromptService } from './prompt.service';
-import { CreatePromptDto } from './dto/create-prompt.dto';
-import { UpdatePromptDto } from './dto/update-prompt.dto';
 
 @Controller('prompt')
 export class PromptController {

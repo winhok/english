@@ -1,34 +1,45 @@
 import { chatMode } from '../prompt/prompt.mode';
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { createDeepSeek, createCheckPoint } from '../llm/llm.config';
+import {
+  createDeepSeek,
+  createCheckPoint,
+  createBochaSearch,
+} from '../llm/llm.config';
 import { PostgresSaver } from '@langchain/langgraph-checkpoint-postgres';
 import type { ChatRoleType, ChatDto } from '@en/common/chat';
-import { AIMessageChunk, createAgent, type ReactAgent } from 'langchain';
+import { AIMessageChunk, createAgent } from 'langchain';
 import { ResponseService } from '@libs/shared';
 
 @Injectable()
 export class ChatService implements OnModuleInit {
   constructor(private readonly responseService: ResponseService) {}
   private checkpointer!: PostgresSaver;
-  private agents: Map<ChatRoleType, ReactAgent> = new Map();
 
   async onModuleInit() {
     this.checkpointer = await createCheckPoint();
-    for (const mode of chatMode) {
-      const agent = createAgent({
-        model: createDeepSeek(),
-        systemPrompt: mode.prompt,
-        checkpointer: this.checkpointer,
-      });
-      this.agents.set(mode.role, agent);
-    }
   }
 
-  streamCompletion(createChatDto: ChatDto) {
-    const agent = this.agents.get(createChatDto.role);
-    if (!agent) {
+  async streamCompletion(createChatDto: ChatDto) {
+    const promptObject = chatMode.find(
+      (item) => item.role === createChatDto.role,
+    );
+    if (!promptObject) {
       throw new Error('模式不存在');
     }
+    let prompt = promptObject.prompt;
+    if (createChatDto.webSearch) {
+      const webSearchPrompt = await createBochaSearch(createChatDto.content);
+      prompt += `\n\n请根据以下搜索结果回答问题：\n${webSearchPrompt}(并且返回你参考的网站名称)，用户问题：${createChatDto.content}`;
+    }
+    const model = createDeepSeek({
+      professionalMode: createChatDto.professionalMode,
+      thinkingEffort: createChatDto.thinkingEffort,
+    });
+    const agent = createAgent({
+      model: model,
+      systemPrompt: prompt,
+      checkpointer: this.checkpointer,
+    });
     const id = `${createChatDto.userId}-${createChatDto.role}`;
     const stream = agent.stream(
       {
@@ -52,6 +63,7 @@ export class ChatService implements OnModuleInit {
       list.map((item) => ({
         content: item.content,
         role: item.type,
+        reasoning: item.additional_kwargs?.reasoning_content ?? '',
       })),
     );
   }

@@ -15,9 +15,22 @@ export class ChatController {
     const stream = await this.chatService.streamCompletion(createChatDto);
     for await (const chunk of stream) {
       const [msg] = chunk;
-      res.write(
-        `data: ${JSON.stringify({ content: msg.content, role: 'ai' })}\n\n`,
-      );
+      const thinkMsg = msg.additional_kwargs?.reasoning_content ?? '';
+      if (thinkMsg) {
+        res.write(
+          `data: ${JSON.stringify({
+            content: thinkMsg,
+            role: 'ai',
+            type: 'reasoning',
+          })}\n\n`,
+        );
+      }
+      const content = msg.content ?? '';
+      if (content) {
+        res.write(
+          `data: ${JSON.stringify({ content: content, role: 'ai', type: 'chat' })}\n\n`,
+        );
+      }
     }
     res.end();
   }

@@ -7,7 +7,13 @@
 <script setup lang="ts">
 import Conversations from "./components/Conversations.vue";
 import Bubble from "./components/Bubble.vue";
-import type { ChatRoleType, ChatMessageList, ChatMessage, ChatDto } from "@en/common/chat";
+import type {
+  ChatRoleType,
+  ChatMessageList,
+  ChatMessage,
+  ChatDto,
+  ThinkingEffort,
+} from "@en/common/chat";
 import { getChatHistory } from "@/apis/chat";
 import { useUserStore } from "@/stores/user";
 import { ref } from "vue";
@@ -24,14 +30,22 @@ const getRole = async (params: ChatRoleType) => {
   list.value = res.data;
 };
 
-const sendMessage = (message: string) => {
+const sendMessage = (
+  message: string,
+  professionalMode: boolean,
+  webSearch: boolean,
+  thinkingEffort?: ThinkingEffort,
+) => {
   list.value.push({
     role: "human",
     content: message,
+    type: "chat",
   });
   list.value.push({
     role: "ai",
     content: "",
+    reasoning: "",
+    type: "chat",
   });
 
   sse<ChatMessage, ChatDto>(
@@ -41,11 +55,19 @@ const sendMessage = (message: string) => {
       role: role.value,
       content: message,
       userId: userId!,
+      professionalMode,
+      thinkingEffort,
+      webSearch,
     },
     (data) => {
       const last = list.value[list.value.length - 1];
       if (!last) return;
-      last.content += data.content;
+      if (data.type === "reasoning") {
+        last.reasoning += data.content;
+      }
+      if (data.type === "chat") {
+        last.content += data.content;
+      }
     },
   );
 };

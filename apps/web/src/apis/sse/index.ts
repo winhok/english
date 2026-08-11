@@ -3,7 +3,7 @@ import type { Method } from "axios";
 
 export const CHAT_URL = "/ai/v1/chat";
 
-export const sse = <T, V = any>(
+export const sse = <T, V = unknown>(
   url: string,
   method: Method = "POST",
   body: V,
