@@ -70,6 +70,9 @@ importers:
       '@tsconfig/node24':
         specifier: ^24.0.4
         version: 24.0.4
+      '@types/dom-speech-recognition':
+        specifier: ^0.0.12
+        version: 0.0.12
       '@types/node':
         specifier: ^26.2.0
         version: 26.2.0
@@ -1502,6 +1505,9 @@ packages:
 
   '@types/d3-time@3.0.0':
     resolution: {integrity: sha512-sZLCdHvBUcNby1cB6Fd3ZBrABbjz3v1Vm90nysCQ6Vt7vd6e/h9Lt7SiJUoEX0l4Dzc7P5llKyhqSi1ycSf1Hg==}
+
+  '@types/dom-speech-recognition@0.0.12':
+    resolution: {integrity: sha512-SmLovKV3e/J71U5CBmKYe03Q75biuw7jiEWGoO1arc47CjtmxCr+W7cPJcAAwySSJFwr+jWkr/fPVuVuL+D6Dw==}
 
   '@types/eslint-scope@3.7.7':
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
@@ -6597,6 +6603,8 @@ snapshots:
   '@types/d3-time-format@2.1.0': {}
 
   '@types/d3-time@3.0.0': {}
+
+  '@types/dom-speech-recognition@0.0.12': {}
 
   '@types/eslint-scope@3.7.7':
     dependencies:
